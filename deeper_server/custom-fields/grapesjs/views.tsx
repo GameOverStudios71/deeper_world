@@ -99,6 +99,55 @@ export const Field = ({
     }
   }, [value]);
 
+  useEffect(() => {
+    // Atraso para garantir que o DOM esteja totalmente renderizado
+    setTimeout(() => {
+      // Assumindo que os nomes dos campos no schema são 'title' e 'slug'
+      const titleInput = document.querySelector<HTMLInputElement>('input[id="title"]');
+      const slugInput = document.querySelector<HTMLInputElement>('input[id="slug"]');
+
+      if (!titleInput || !slugInput) {
+        console.log('Deeper World Slugify: Inputs de Título ou Slug não encontrados.');
+        return;
+      }
+
+      const gerarSlug = (texto: string) => {
+        if (!texto) return '';
+        return texto
+          .toString()
+          .toLowerCase()
+          .normalize('NFD') // Separa acentos das letras
+          .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+          .replace(/\s+/g, '_') // Substitui espaços por _
+          .replace(/[^\w_]+/g, '') // Remove caracteres não alfanuméricos (exceto _)
+          .replace(/__+/g, '_'); // Substitui múltiplos _ por um só
+      };
+
+      const handleTitleChange = (event: Event) => {
+        if (slugInput && event.target) {
+          const titleValue = (event.target as HTMLInputElement).value;
+          const slugValue = gerarSlug(titleValue);
+
+          // Simula a entrada do usuário para que o React atualize o estado
+          const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+            window.HTMLInputElement.prototype,
+            'value'
+          )?.set;
+          nativeInputValueSetter?.call(slugInput, slugValue);
+
+          const inputEvent = new Event('input', { bubbles: true });
+          slugInput.dispatchEvent(inputEvent);
+        }
+      };
+
+      // Evita adicionar o mesmo listener múltiplas vezes
+      if (!titleInput.dataset.slugListenerAttached) {
+        titleInput.addEventListener('input', handleTitleChange);
+        titleInput.dataset.slugListenerAttached = 'true';
+      }
+    }, 500); // 500ms de atraso
+  }, []);
+
   return (
     <FieldContainer>
       <FieldLabel htmlFor={field.path}>{field.label}</FieldLabel>

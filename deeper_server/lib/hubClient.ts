@@ -117,7 +117,4 @@ export async function initializeHubConnection(serverName: string): Promise<void>
       await new Promise(resolve => setTimeout(resolve, 5000)); // Espera 5 segundos
     }
   }
-
-  // O heartbeat periódico foi desabilitado conforme nova arquitetura.
-  // O servidor apenas notifica que está online uma vez durante a inicialização.
 }
