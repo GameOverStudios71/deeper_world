@@ -146,6 +146,7 @@ type Server {
 
 input ServerWhereUniqueInput {
   id: ID
+  name: String
   url: String
 }
 

@@ -37,7 +37,7 @@ export const lists = {
   Server: list({
     access: allowAll,
     fields: {
-      name: text({ validation: { isRequired: true } }),
+      name: text({ validation: { isRequired: true }, isIndexed: 'unique' }),
       url: text({
         validation: { isRequired: true },
         isIndexed: 'unique',
