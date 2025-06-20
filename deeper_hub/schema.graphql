@@ -140,6 +140,7 @@ type Server {
   url: String
   description: String
   owner: User
+  certificate: String
   status: String
 }
 
@@ -157,6 +158,7 @@ input ServerWhereInput {
   url: StringFilter
   description: StringFilter
   owner: UserWhereInput
+  certificate: StringFilter
   status: StringNullableFilter
 }
 
@@ -179,6 +181,7 @@ input ServerOrderByInput {
   name: OrderDirection
   url: OrderDirection
   description: OrderDirection
+  certificate: OrderDirection
   status: OrderDirection
 }
 
@@ -187,6 +190,7 @@ input ServerUpdateInput {
   url: String
   description: String
   owner: UserRelateToOneForUpdateInput
+  certificate: String
   status: String
 }
 
@@ -206,6 +210,7 @@ input ServerCreateInput {
   url: String
   description: String
   owner: UserRelateToOneForCreateInput
+  certificate: String
   status: String
 }
 

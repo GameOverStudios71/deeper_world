@@ -27,6 +27,7 @@ model Server {
   description String  @default("")
   owner       User?   @relation("Server_owner", fields: [ownerId], references: [id])
   ownerId     String? @map("owner")
+  certificate String  @default("")
   status      String? @default("offline")
 
   @@index([ownerId])

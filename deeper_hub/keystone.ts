@@ -46,11 +46,8 @@ export default withAuth(
           }
 
           try {
-            // Autentica o usuário
-            const user = await context.query.User.findOne({
-              where: { email },
-              query: 'id password',
-            });
+            // Autentica o usuário usando o cliente Prisma para acesso direto ao DB
+            const user = await context.prisma.user.findUnique({ where: { email } });
 
             if (!user) {
               return res.status(401).json({ error: 'Usuário não encontrado.' });
