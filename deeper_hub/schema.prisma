@@ -12,13 +12,14 @@ generator client {
 }
 
 model User {
-  id        String    @id @default(cuid())
-  name      String    @default("")
-  email     String    @unique @default("")
-  password  String
-  posts     Post[]    @relation("Post_author")
-  servers   Server[]  @relation("Server_owner")
-  createdAt DateTime? @default(now())
+  id               String    @id @default(cuid())
+  name             String    @default("")
+  email            String    @unique @default("")
+  password         String
+  posts            Post[]    @relation("Post_author")
+  servers          Server[]  @relation("Server_owner")
+  createdAt        DateTime? @default(now())
+  from_Page_author Page[]    @relation("Page_author")
 }
 
 model Server {
@@ -41,6 +42,17 @@ model Post {
   author   User?   @relation("Post_author", fields: [authorId], references: [id])
   authorId String? @map("author")
   tags     Tag[]   @relation("Post_tags")
+
+  @@index([authorId])
+}
+
+model Page {
+  id       String  @id @default(cuid())
+  title    String  @default("")
+  slug     String  @unique @default("")
+  content  String  @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
+  author   User?   @relation("Page_author", fields: [authorId], references: [id])
+  authorId String? @map("author")
 
   @@index([authorId])
 }

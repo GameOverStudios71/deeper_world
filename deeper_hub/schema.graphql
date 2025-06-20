@@ -311,6 +311,58 @@ input TagRelateToManyForCreateInput {
   connect: [TagWhereUniqueInput!]
 }
 
+type Page {
+  id: ID!
+  title: String
+  slug: String
+  content: Page_content_Document
+  author: User
+}
+
+type Page_content_Document {
+  document(hydrateRelationships: Boolean! = false): JSON!
+}
+
+input PageWhereUniqueInput {
+  id: ID
+  slug: String
+}
+
+input PageWhereInput {
+  AND: [PageWhereInput!]
+  OR: [PageWhereInput!]
+  NOT: [PageWhereInput!]
+  id: IDFilter
+  title: StringFilter
+  slug: StringFilter
+  author: UserWhereInput
+}
+
+input PageOrderByInput {
+  id: OrderDirection
+  title: OrderDirection
+  slug: OrderDirection
+}
+
+input PageUpdateInput {
+  title: String
+  slug: String
+  content: JSON
+  author: UserRelateToOneForUpdateInput
+}
+
+input PageUpdateArgs {
+  where: PageWhereUniqueInput!
+  data: PageUpdateInput!
+}
+
+input PageCreateInput {
+  title: String
+  slug: String
+  content: JSON
+  author: UserRelateToOneForCreateInput
+}
+
 type Tag {
   id: ID!
   name: String
@@ -375,6 +427,12 @@ type Mutation {
   updatePosts(data: [PostUpdateArgs!]!): [Post]
   deletePost(where: PostWhereUniqueInput!): Post
   deletePosts(where: [PostWhereUniqueInput!]!): [Post]
+  createPage(data: PageCreateInput!): Page
+  createPages(data: [PageCreateInput!]!): [Page]
+  updatePage(where: PageWhereUniqueInput!, data: PageUpdateInput!): Page
+  updatePages(data: [PageUpdateArgs!]!): [Page]
+  deletePage(where: PageWhereUniqueInput!): Page
+  deletePages(where: [PageWhereUniqueInput!]!): [Page]
   createTag(data: TagCreateInput!): Tag
   createTags(data: [TagCreateInput!]!): [Tag]
   updateTag(where: TagWhereUniqueInput!, data: TagUpdateInput!): Tag
@@ -413,6 +471,9 @@ type Query {
   post(where: PostWhereUniqueInput!): Post
   posts(where: PostWhereInput! = {}, orderBy: [PostOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: PostWhereUniqueInput): [Post!]
   postsCount(where: PostWhereInput! = {}): Int
+  page(where: PageWhereUniqueInput!): Page
+  pages(where: PageWhereInput! = {}, orderBy: [PageOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: PageWhereUniqueInput): [Page!]
+  pagesCount(where: PageWhereInput! = {}): Int
   tag(where: TagWhereUniqueInput!): Tag
   tags(where: TagWhereInput! = {}, orderBy: [TagOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: TagWhereUniqueInput): [Tag!]
   tagsCount(where: TagWhereInput! = {}): Int

@@ -90,8 +90,17 @@ async function sendHeartbeat(serverName: string, creds: ServerCredentials): Prom
     console.log(`Heartbeat enviado com sucesso para o Deeper Hub. (${timestamp})`);
     return true;
   } catch (error: any) {
-    // Não exibir o erro completo aqui, apenas uma mensagem de que a tentativa falhou.
     console.log('Falha ao enviar heartbeat. Verificando se o Deeper Hub está online...');
+    if (axios.isAxiosError(error)) {
+      console.error('Erro detalhado do Axios:', {
+        message: error.message,
+        code: error.code,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
+    } else {
+      console.error('Erro inesperado no heartbeat:', error);
+    }
     return false;
   }
 }

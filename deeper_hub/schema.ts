@@ -156,6 +156,30 @@ export const lists = {
     },
   }),
 
+  Page: list({
+    access: allowAll,
+    fields: {
+      title: text({ validation: { isRequired: true } }),
+      slug: text({ isIndexed: 'unique', validation: { isRequired: true } }),
+      content: document({
+        formatting: true,
+        layouts: [
+          [1, 1],
+          [1, 1, 1],
+          [2, 1],
+          [1, 2],
+          [1, 2, 1],
+        ],
+        links: true,
+        dividers: true,
+      }),
+      author: relationship({
+        ref: 'User',
+        many: false,
+      }),
+    },
+  }),
+
   // this last list is our Tag list, it only has a name field for now
   Tag: list({
     // WARNING
