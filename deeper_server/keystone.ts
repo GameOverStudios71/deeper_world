@@ -16,6 +16,11 @@ import { lists } from './schema'
 export default config({
   server: {
     port: 3001,
+    extendExpressApp: (app) => {
+      app.get('/api/health', (req, res) => {
+        res.json({ status: 'ok' });
+      });
+    },
   },
   db: {
     // we're using sqlite for the fastest startup experience

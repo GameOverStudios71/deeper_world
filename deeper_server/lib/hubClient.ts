@@ -65,7 +65,7 @@ async function registerWithHub(serverName: string): Promise<ServerCredentials | 
 }
 
 // Função para enviar um heartbeat assinado para o Hub
-async function sendHeartbeat(serverName: string, creds: ServerCredentials): Promise<void> {
+async function sendHeartbeat(serverName: string, creds: ServerCredentials): Promise<boolean> {
   try {
     const privateKey = pki.privateKeyFromPem(creds.privateKey);
     const timestamp = new Date().toISOString();
@@ -84,8 +84,11 @@ async function sendHeartbeat(serverName: string, creds: ServerCredentials): Prom
     });
 
     console.log(`Heartbeat enviado com sucesso para o Deeper Hub. (${timestamp})`);
+    return true;
   } catch (error: any) {
-    console.error('Falha ao enviar heartbeat:', error.response?.data?.error || error.message);
+    // Não exibir o erro completo aqui, apenas uma mensagem de que a tentativa falhou.
+    console.log('Falha ao enviar heartbeat. Verificando se o Deeper Hub está online...');
+    return false;
   }
 }
 
@@ -104,8 +107,16 @@ export async function initializeHubConnection(serverName: string): Promise<void>
     }
   }
 
-  // Envia o primeiro heartbeat na inicialização
-  await sendHeartbeat(serverName, creds);
+  // Envia o primeiro heartbeat na inicialização, com retentativas.
+  console.log('Tentando notificar o Deeper Hub que o servidor está online...');
+  let heartbeatSent = false;
+  while (!heartbeatSent) {
+    heartbeatSent = await sendHeartbeat(serverName, creds!);
+    if (!heartbeatSent) {
+      console.log('Não foi possível conectar ao Deeper Hub. Nova tentativa em 5 segundos...');
+      await new Promise(resolve => setTimeout(resolve, 5000)); // Espera 5 segundos
+    }
+  }
 
   // O heartbeat periódico foi desabilitado conforme nova arquitetura.
   // O servidor apenas notifica que está online uma vez durante a inicialização.
