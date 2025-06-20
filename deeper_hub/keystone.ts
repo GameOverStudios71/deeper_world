@@ -23,7 +23,7 @@ export default withAuth(
   config({
     db: {
       provider: 'sqlite',
-      url: 'file:./keystone.db',
+      url: 'file:./deeper_hub.db',
     },
     lists,
     session,

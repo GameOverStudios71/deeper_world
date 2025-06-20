@@ -59,3 +59,11 @@ To run this project and see the GrapesJS editor in action, follow these steps:
 
 ---
 *This README was updated to reflect the GrapesJS integration.*
+
+
+
+'''json
+
+cls & curl -X POST -H "Content-Type: application/json" -d "{\"serverName\": \"deeper-server-instance-1\"}" http://localhost:3000/api/report-server-down
+
+'''

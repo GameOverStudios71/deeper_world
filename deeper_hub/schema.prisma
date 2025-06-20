@@ -16,19 +16,37 @@ model User {
   name      String    @default("")
   email     String    @unique @default("")
   password  String
+  posts     Post[]    @relation("Post_author")
   servers   Server[]  @relation("Server_owner")
   createdAt DateTime? @default(now())
 }
 
 model Server {
-  id          String  @id @default(cuid())
-  name        String  @unique @default("")
-  url         String  @unique @default("")
-  description String  @default("")
-  owner       User?   @relation("Server_owner", fields: [ownerId], references: [id])
-  ownerId     String? @map("owner")
-  certificate String  @default("")
-  status      String? @default("offline")
+  id            String    @id @default(cuid())
+  name          String    @unique @default("")
+  url           String    @default("")
+  owner         User?     @relation("Server_owner", fields: [ownerId], references: [id])
+  ownerId       String?   @map("owner")
+  status        String?   @default("offline")
+  certificate   String    @default("")
+  lastHeartbeat DateTime?
 
   @@index([ownerId])
+}
+
+model Post {
+  id       String  @id @default(cuid())
+  title    String  @default("")
+  content  String  @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
+  author   User?   @relation("Post_author", fields: [authorId], references: [id])
+  authorId String? @map("author")
+  tags     Tag[]   @relation("Post_tags")
+
+  @@index([authorId])
+}
+
+model Tag {
+  id    String @id @default(cuid())
+  name  String @default("")
+  posts Post[] @relation("Post_tags")
 }

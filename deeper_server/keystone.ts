@@ -27,7 +27,7 @@ export default config({
     //   for more information on what database might be appropriate for you
     //   see https://keystonejs.com/docs/guides/choosing-a-database#title
     provider: 'sqlite',
-    url: 'file:./keystone.db',
+    url: 'file:./deeper_server.db',
     onConnect: async () => {
       // O nome deste servidor. Em um cenário real, isso viria de um arquivo de configuração.
       const thisServerName = 'deeper-server-instance-1';

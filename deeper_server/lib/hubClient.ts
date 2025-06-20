@@ -22,6 +22,10 @@ interface ServerCredentials {
 
 // Função para salvar as credenciais em um arquivo
 function saveCredentials(creds: ServerCredentials): void {
+  const dirPath = path.dirname(credsPath);
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
   fs.writeFileSync(credsPath, JSON.stringify(creds, null, 2));
   console.log(`Credenciais salvas em ${credsPath}`);
 }
