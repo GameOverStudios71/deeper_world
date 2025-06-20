@@ -6,8 +6,8 @@ type User {
   name: String
   email: String
   password: PasswordState
-  posts(where: PostWhereInput! = {}, orderBy: [PostOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: PostWhereUniqueInput): [Post!]
-  postsCount(where: PostWhereInput! = {}): Int
+  servers(where: ServerWhereInput! = {}, orderBy: [ServerOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ServerWhereUniqueInput): [Server!]
+  serversCount(where: ServerWhereInput! = {}): Int
   createdAt: DateTime
 }
 
@@ -29,7 +29,7 @@ input UserWhereInput {
   id: IDFilter
   name: StringFilter
   email: StringFilter
-  posts: PostManyRelationFilter
+  servers: ServerManyRelationFilter
   createdAt: DateTimeNullableFilter
 }
 
@@ -72,10 +72,10 @@ input NestedStringFilter {
   not: NestedStringFilter
 }
 
-input PostManyRelationFilter {
-  every: PostWhereInput
-  some: PostWhereInput
-  none: PostWhereInput
+input ServerManyRelationFilter {
+  every: ServerWhereInput
+  some: ServerWhereInput
+  none: ServerWhereInput
 }
 
 input DateTimeNullableFilter {
@@ -105,15 +105,15 @@ input UserUpdateInput {
   name: String
   email: String
   password: String
-  posts: PostRelateToManyForUpdateInput
+  servers: ServerRelateToManyForUpdateInput
   createdAt: DateTime
 }
 
-input PostRelateToManyForUpdateInput {
-  disconnect: [PostWhereUniqueInput!]
-  set: [PostWhereUniqueInput!]
-  create: [PostCreateInput!]
-  connect: [PostWhereUniqueInput!]
+input ServerRelateToManyForUpdateInput {
+  disconnect: [ServerWhereUniqueInput!]
+  set: [ServerWhereUniqueInput!]
+  create: [ServerCreateInput!]
+  connect: [ServerWhereUniqueInput!]
 }
 
 input UserUpdateArgs {
@@ -125,54 +125,69 @@ input UserCreateInput {
   name: String
   email: String
   password: String
-  posts: PostRelateToManyForCreateInput
+  servers: ServerRelateToManyForCreateInput
   createdAt: DateTime
 }
 
-input PostRelateToManyForCreateInput {
-  create: [PostCreateInput!]
-  connect: [PostWhereUniqueInput!]
+input ServerRelateToManyForCreateInput {
+  create: [ServerCreateInput!]
+  connect: [ServerWhereUniqueInput!]
 }
 
-type Post {
+type Server {
   id: ID!
-  title: String
-  content: JSON
-  author: User
-  tags(where: TagWhereInput! = {}, orderBy: [TagOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: TagWhereUniqueInput): [Tag!]
-  tagsCount(where: TagWhereInput! = {}): Int
+  name: String
+  url: String
+  description: String
+  owner: User
+  status: String
 }
 
-input PostWhereUniqueInput {
+input ServerWhereUniqueInput {
   id: ID
+  url: String
 }
 
-input PostWhereInput {
-  AND: [PostWhereInput!]
-  OR: [PostWhereInput!]
-  NOT: [PostWhereInput!]
+input ServerWhereInput {
+  AND: [ServerWhereInput!]
+  OR: [ServerWhereInput!]
+  NOT: [ServerWhereInput!]
   id: IDFilter
-  title: StringFilter
-  author: UserWhereInput
-  tags: TagManyRelationFilter
+  name: StringFilter
+  url: StringFilter
+  description: StringFilter
+  owner: UserWhereInput
+  status: StringNullableFilter
 }
 
-input TagManyRelationFilter {
-  every: TagWhereInput
-  some: TagWhereInput
-  none: TagWhereInput
+input StringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: StringNullableFilter
 }
 
-input PostOrderByInput {
+input ServerOrderByInput {
   id: OrderDirection
-  title: OrderDirection
+  name: OrderDirection
+  url: OrderDirection
+  description: OrderDirection
+  status: OrderDirection
 }
 
-input PostUpdateInput {
-  title: String
-  content: JSON
-  author: UserRelateToOneForUpdateInput
-  tags: TagRelateToManyForUpdateInput
+input ServerUpdateInput {
+  name: String
+  url: String
+  description: String
+  owner: UserRelateToOneForUpdateInput
+  status: String
 }
 
 input UserRelateToOneForUpdateInput {
@@ -181,73 +196,22 @@ input UserRelateToOneForUpdateInput {
   disconnect: Boolean
 }
 
-input TagRelateToManyForUpdateInput {
-  disconnect: [TagWhereUniqueInput!]
-  set: [TagWhereUniqueInput!]
-  create: [TagCreateInput!]
-  connect: [TagWhereUniqueInput!]
+input ServerUpdateArgs {
+  where: ServerWhereUniqueInput!
+  data: ServerUpdateInput!
 }
 
-input PostUpdateArgs {
-  where: PostWhereUniqueInput!
-  data: PostUpdateInput!
-}
-
-input PostCreateInput {
-  title: String
-  content: JSON
-  author: UserRelateToOneForCreateInput
-  tags: TagRelateToManyForCreateInput
+input ServerCreateInput {
+  name: String
+  url: String
+  description: String
+  owner: UserRelateToOneForCreateInput
+  status: String
 }
 
 input UserRelateToOneForCreateInput {
   create: UserCreateInput
   connect: UserWhereUniqueInput
-}
-
-input TagRelateToManyForCreateInput {
-  create: [TagCreateInput!]
-  connect: [TagWhereUniqueInput!]
-}
-
-type Tag {
-  id: ID!
-  name: String
-  posts(where: PostWhereInput! = {}, orderBy: [PostOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: PostWhereUniqueInput): [Post!]
-  postsCount(where: PostWhereInput! = {}): Int
-}
-
-input TagWhereUniqueInput {
-  id: ID
-}
-
-input TagWhereInput {
-  AND: [TagWhereInput!]
-  OR: [TagWhereInput!]
-  NOT: [TagWhereInput!]
-  id: IDFilter
-  name: StringFilter
-  posts: PostManyRelationFilter
-}
-
-input TagOrderByInput {
-  id: OrderDirection
-  name: OrderDirection
-}
-
-input TagUpdateInput {
-  name: String
-  posts: PostRelateToManyForUpdateInput
-}
-
-input TagUpdateArgs {
-  where: TagWhereUniqueInput!
-  data: TagUpdateInput!
-}
-
-input TagCreateInput {
-  name: String
-  posts: PostRelateToManyForCreateInput
 }
 
 """
@@ -262,18 +226,12 @@ type Mutation {
   updateUsers(data: [UserUpdateArgs!]!): [User]
   deleteUser(where: UserWhereUniqueInput!): User
   deleteUsers(where: [UserWhereUniqueInput!]!): [User]
-  createPost(data: PostCreateInput!): Post
-  createPosts(data: [PostCreateInput!]!): [Post]
-  updatePost(where: PostWhereUniqueInput!, data: PostUpdateInput!): Post
-  updatePosts(data: [PostUpdateArgs!]!): [Post]
-  deletePost(where: PostWhereUniqueInput!): Post
-  deletePosts(where: [PostWhereUniqueInput!]!): [Post]
-  createTag(data: TagCreateInput!): Tag
-  createTags(data: [TagCreateInput!]!): [Tag]
-  updateTag(where: TagWhereUniqueInput!, data: TagUpdateInput!): Tag
-  updateTags(data: [TagUpdateArgs!]!): [Tag]
-  deleteTag(where: TagWhereUniqueInput!): Tag
-  deleteTags(where: [TagWhereUniqueInput!]!): [Tag]
+  createServer(data: ServerCreateInput!): Server
+  createServers(data: [ServerCreateInput!]!): [Server]
+  updateServer(where: ServerWhereUniqueInput!, data: ServerUpdateInput!): Server
+  updateServers(data: [ServerUpdateArgs!]!): [Server]
+  deleteServer(where: ServerWhereUniqueInput!): Server
+  deleteServers(where: [ServerWhereUniqueInput!]!): [Server]
   endSession: Boolean!
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
@@ -300,12 +258,9 @@ type Query {
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput! = {}, orderBy: [UserOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: UserWhereUniqueInput): [User!]
   usersCount(where: UserWhereInput! = {}): Int
-  post(where: PostWhereUniqueInput!): Post
-  posts(where: PostWhereInput! = {}, orderBy: [PostOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: PostWhereUniqueInput): [Post!]
-  postsCount(where: PostWhereInput! = {}): Int
-  tag(where: TagWhereUniqueInput!): Tag
-  tags(where: TagWhereInput! = {}, orderBy: [TagOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: TagWhereUniqueInput): [Tag!]
-  tagsCount(where: TagWhereInput! = {}): Int
+  server(where: ServerWhereUniqueInput!): Server
+  servers(where: ServerWhereInput! = {}, orderBy: [ServerOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ServerWhereUniqueInput): [Server!]
+  serversCount(where: ServerWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }

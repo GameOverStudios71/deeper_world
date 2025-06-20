@@ -1,9 +1,17 @@
 /** @jsxRuntime classic */
 /** @jsx jsx */
 import { jsx } from '@keystone-ui/core';
-import { FieldContainer, FieldLabel, CellContainer } from '@keystone-ui/fields';
-import { FieldProps, CellProps, CardValueProps, FieldController, FieldControllerConfig } from '@keystone-6/core/types';
-import { CellLink } from '@keystone-6/core/admin-ui/components';
+import { FieldContainer, FieldLabel } from '@keystone-ui/fields';
+import {
+  FieldProps,
+  FieldController,
+  FieldControllerConfig,
+} from '@keystone-6/core/types';
+import {
+  CellLink,
+  CellComponent,
+  CardValueComponent,
+} from '@keystone-6/core/admin-ui/components';
 import { useEffect, useRef } from 'react';
 import 'grapesjs/dist/css/grapes.min.css';
 import GrapesJS from 'grapesjs';
@@ -14,7 +22,11 @@ type GrapesJsValue = {
   css: string;
 } | null;
 
-export const Field = ({ field, value, onChange }: FieldProps<typeof controller>) => {
+export const Field = ({
+  field,
+  value,
+  onChange,
+}: FieldProps<typeof controller>) => {
   const editorRef = useRef<any>(null);
   const editorElRef = useRef<HTMLDivElement>(null);
 
@@ -26,11 +38,16 @@ export const Field = ({ field, value, onChange }: FieldProps<typeof controller>)
         storageManager: false,
         plugins: [grapesjsPresetWebpage],
         pluginsOpts: {
-          [grapesjsPresetWebpage]: {},
+          'gjs-preset-webpage': {},
         },
       });
 
-      if (value && typeof value === 'object' && value !== null && 'html' in value) {
+      if (
+        value &&
+        typeof value === 'object' &&
+        value !== null &&
+        'html' in value
+      ) {
         const data = value as GrapesJsValue;
         if (data?.html) editor.setComponents(data.html);
         if (data?.css) editor.setStyle(data.css);
@@ -38,8 +55,8 @@ export const Field = ({ field, value, onChange }: FieldProps<typeof controller>)
 
       const handleUpdate = () => {
         if (onChange) {
-          const html = editor.getHtml();
-          const css = editor.getCss();
+          const html = editor.getHtml() || '';
+          const css = editor.getCss() || '';
           onChange({ html, css });
         }
       };
@@ -62,8 +79,15 @@ export const Field = ({ field, value, onChange }: FieldProps<typeof controller>)
       const editorHtml = editor.getHtml();
       const editorCss = editor.getCss();
 
-      if (JSON.stringify({ html: editorHtml, css: editorCss }) !== JSON.stringify(value)) {
-        if (typeof value === 'object' && value !== null && 'html' in value) {
+      if (
+        JSON.stringify({ html: editorHtml, css: editorCss }) !==
+        JSON.stringify(value)
+      ) {
+        if (
+          typeof value === 'object' &&
+          value !== null &&
+          'html' in value
+        ) {
           const data = value as GrapesJsValue;
           if (data?.html) editor.setComponents(data.html);
           if (data?.css) editor.setStyle(data.css);
@@ -85,17 +109,23 @@ export const Field = ({ field, value, onChange }: FieldProps<typeof controller>)
   );
 };
 
-export const Cell = ({ item, field, linkTo }: CellProps<typeof controller>) => {
+export const Cell: CellComponent<typeof controller> = ({
+  item,
+  field,
+  linkTo,
+}) => {
   const value = item[field.path];
-  // Since value is a stringified JSON, we just check if it exists.
   const label = value ? '[Page Content]' : '';
   if (linkTo) {
     return <CellLink {...linkTo}>{label}</CellLink>;
   }
-  return <CellContainer>{label}</CellContainer>;
+  return <span>{label}</span>;
 };
 
-export const CardValue = ({ item, field }: CardValueProps<typeof controller>) => {
+export const CardValue: CardValueComponent<typeof controller> = ({
+  item,
+  field,
+}) => {
   const value = item[field.path];
   return (
     <FieldContainer>
@@ -106,11 +136,12 @@ export const CardValue = ({ item, field }: CardValueProps<typeof controller>) =>
 };
 
 export const controller = (
-  config: FieldControllerConfig
+  config: FieldControllerConfig<GrapesJsValue>
 ): FieldController<GrapesJsValue, GrapesJsValue> => {
   return {
     path: config.path,
     label: config.label,
+    description: config.description,
     graphqlSelection: config.path,
     defaultValue: null,
     deserialize: item => {
