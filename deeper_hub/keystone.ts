@@ -63,9 +63,15 @@ export default withAuth(
             // Gera o certificado para o servidor
             const serverCreds = generateServerCertificate(serverName, ca);
 
-            // Cria o servidor no banco de dados
-            await context.query.Server.createOne({
-              data: {
+            // Lógica de Upsert: atualiza o servidor se ele existir, ou cria um novo.
+            await context.prisma.server.upsert({
+              where: { name: serverName },
+              update: {
+                url: serverUrl,
+                certificate: serverCreds.certificate,
+                owner: { connect: { id: user.id } },
+              },
+              create: {
                 name: serverName,
                 url: serverUrl,
                 owner: { connect: { id: user.id } },
@@ -74,7 +80,7 @@ export default withAuth(
               },
             });
 
-            console.log(`Servidor ${serverName} registrado com sucesso para o usuário ${email}`);
+            console.log(`Registro/Atualização do servidor '${serverName}' concluído com sucesso para o usuário ${email}.`);
 
             // Retorna as credenciais para o deeper_server
             res.json(serverCreds);
@@ -161,8 +167,9 @@ export default withAuth(
               return res.json({ message: 'O status do servidor já era offline.' });
             }
 
-            // Tentar acessar a URL do servidor para confirmar se está offline
-            await axios.get(server.url, { timeout: 5000 }); // Timeout de 5 segundos
+            // Tentar acessar o endpoint de health check do servidor para confirmar se está offline
+            const healthCheckUrl = new URL('/api/health', server.url).toString();
+            await axios.get(healthCheckUrl, { timeout: 5000 }); // Timeout de 5 segundos
 
             // Se chegamos aqui, o servidor respondeu. O relatório era um falso positivo.
             console.log(`Relatório de inatividade para ${serverName} foi um falso positivo. O servidor está online.`);
@@ -171,6 +178,7 @@ export default withAuth(
           } catch (error) {
             // Se axios falhou (timeout, erro de conexão, etc), o servidor está realmente offline.
             console.log(`Verificação confirmou que ${serverName} está offline. Atualizando status.`);
+            console.error('Erro detalhado na verificação do axios:', error);
             await context.prisma.server.update({
               where: { name: serverName },
               data: { status: 'offline' },
