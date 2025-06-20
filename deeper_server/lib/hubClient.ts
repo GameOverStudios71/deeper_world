@@ -49,7 +49,7 @@ async function registerWithHub(serverName: string): Promise<ServerCredentials | 
       email,
       password,
       serverName,
-      serverUrl: `http://${serverName}:4000`, // Exemplo de URL
+      serverUrl: 'http://localhost:3001', // URL correta do servidor local
     });
 
     if (response.data && response.data.certificate) {
