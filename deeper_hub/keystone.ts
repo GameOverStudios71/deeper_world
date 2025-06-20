@@ -6,11 +6,11 @@
 //   you can find out more at https://keystonejs.com/docs/apis/config
 
 import { config } from '@keystone-6/core';
-import { getOrCreateCA, generateServerCertificate } from './lib/pki';
 import { json } from 'express';
-
 import * as bcrypt from 'bcryptjs';
 import * as forge from 'node-forge';
+import axios from 'axios';
+import { getOrCreateCA, generateServerCertificate } from './lib/pki';
 
 // to keep this file tidy, we define our schema in a different file
 import { lists } from './schema'
@@ -133,10 +133,49 @@ export default withAuth(
             });
 
             console.log(`Heartbeat verificado de ${serverName}. Status atualizado para online.`);
-            res.json({ status: 'ok', message: 'Heartbeat recebido e verificado com sucesso.' });
+            res.json({ message: 'Heartbeat recebido e verificado com sucesso.' });
           } catch (error) {
             console.error('Erro no heartbeat:', error);
             res.status(500).json({ error: 'Erro interno do servidor.' });
+          }
+        });
+
+        // Rota para um cliente reportar que um servidor parece estar offline
+        app.post('/api/report-server-down', async (req, res) => {
+          const { serverName } = req.body;
+          if (!serverName) {
+            return res.status(400).json({ error: 'O nome do servidor é obrigatório.' });
+          }
+
+          console.log(`Recebido relatório de inatividade para o servidor: ${serverName}`);
+
+          try {
+            const server = await context.prisma.server.findUnique({ where: { name: serverName } });
+
+            if (!server) {
+              return res.status(404).json({ error: 'Servidor não encontrado.' });
+            }
+
+            // O servidor já está offline, não fazer nada
+            if (server.status === 'offline') {
+              return res.json({ message: 'O status do servidor já era offline.' });
+            }
+
+            // Tentar acessar a URL do servidor para confirmar se está offline
+            await axios.get(server.url, { timeout: 5000 }); // Timeout de 5 segundos
+
+            // Se chegamos aqui, o servidor respondeu. O relatório era um falso positivo.
+            console.log(`Relatório de inatividade para ${serverName} foi um falso positivo. O servidor está online.`);
+            res.json({ message: 'Verificação concluída. O servidor está online.' });
+
+          } catch (error) {
+            // Se axios falhou (timeout, erro de conexão, etc), o servidor está realmente offline.
+            console.log(`Verificação confirmou que ${serverName} está offline. Atualizando status.`);
+            await context.prisma.server.update({
+              where: { name: serverName },
+              data: { status: 'offline' },
+            });
+            res.json({ message: `O servidor ${serverName} foi marcado como offline.` });
           }
         });
       },

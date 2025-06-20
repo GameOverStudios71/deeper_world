@@ -107,6 +107,6 @@ export async function initializeHubConnection(serverName: string): Promise<void>
   // Envia o primeiro heartbeat na inicialização
   await sendHeartbeat(serverName, creds);
 
-  // Configura o envio de heartbeats periódicos (a cada 5 minutos)
-  setInterval(() => sendHeartbeat(serverName, creds!), 300000);
+  // O heartbeat periódico foi desabilitado conforme nova arquitetura.
+  // O servidor apenas notifica que está online uma vez durante a inicialização.
 }
