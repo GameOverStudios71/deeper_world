@@ -55,6 +55,7 @@ export const lists = {
         },
         many: false,
       }),
+      certificate: text({ ui: { displayMode: 'textarea' } }),
       status: select({
         options: [
           { label: 'Online', value: 'online' },

@@ -6,6 +6,7 @@
 //   you can find out more at https://keystonejs.com/docs/apis/config
 
 import { config } from '@keystone-6/core';
+import { initializeHubConnection } from './lib/hubClient';
 
 // to keep this file tidy, we define our schema in a different file
 import { lists } from './schema'
@@ -22,6 +23,12 @@ export default config({
     //   see https://keystonejs.com/docs/guides/choosing-a-database#title
     provider: 'sqlite',
     url: 'file:./keystone.db',
+    onConnect: async () => {
+      // O nome deste servidor. Em um cenário real, isso viria de um arquivo de configuração.
+      const thisServerName = 'deeper-server-instance-1';
+      console.log(`🚀 Servidor ${thisServerName} conectado ao banco de dados.`);
+      await initializeHubConnection(thisServerName);
+    },
   },
   lists,
 });
