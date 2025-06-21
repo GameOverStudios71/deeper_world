@@ -24,7 +24,15 @@ import { document } from '@keystone-6/fields-document'
 
 // when using Typescript, you can refine your types to a stricter subset by importing
 // the generated types from '.keystone/types'
-import { type Lists } from '.keystone/types'
+import { type Lists } from '.keystone/types';
+import { grapesJsField } from './custom-fields/grapesjs';
+
+const slugify = (str: string) =>
+  str
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s]/g, '') // remove caracteres especiais
+    .replace(/\s+/g, '_'); // substitui espaços por _
 
 export const lists = {
   User: list({
@@ -160,23 +168,33 @@ export const lists = {
     access: allowAll,
     fields: {
       title: text({ validation: { isRequired: true } }),
-      slug: text({ isIndexed: 'unique', validation: { isRequired: true } }),
-      content: document({
-        formatting: true,
-        layouts: [
-          [1, 1],
-          [1, 1, 1],
-          [2, 1],
-          [1, 2],
-          [1, 2, 1],
-        ],
-        links: true,
-        dividers: true,
+      content: grapesJsField(),
+      slug: text({
+        isIndexed: 'unique',
+        ui: {
+          createView: { fieldMode: 'hidden' },
+          itemView: { fieldMode: 'read' },
+        },
       }),
-      author: relationship({
-        ref: 'User',
-        many: false,
+      createdAt: timestamp({
+        defaultValue: { kind: 'now' },
+        ui: {
+          createView: { fieldMode: 'hidden' },
+          itemView: { fieldMode: 'hidden' },
+        },
       }),
+    },
+    hooks: {
+      resolveInput: ({ resolvedData }) => {
+        const { title } = resolvedData;
+        if (title) {
+          return {
+            ...resolvedData,
+            slug: slugify(title),
+          };
+        }
+        return resolvedData;
+      },
     },
   }),
 

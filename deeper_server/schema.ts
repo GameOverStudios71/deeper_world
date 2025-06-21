@@ -28,6 +28,14 @@ import { document } from '@keystone-6/fields-document'
 // the generated types from '.keystone/types'
 import { type Lists } from '.keystone/types'
 
+// A simple slugify function to convert strings into URL-friendly slugs
+const slugify = (str: string) =>
+  str
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s]/g, '') // remove caracteres especiais
+    .replace(/\s+/g, '_'); // substitui espaços por _
+
 export const lists = {
   User: list({
     // WARNING
@@ -58,6 +66,10 @@ export const lists = {
       createdAt: timestamp({
         // this sets the timestamp to Date.now() when the user is first created
         defaultValue: { kind: 'now' },
+        ui: {
+          createView: { fieldMode: 'hidden' },
+          itemView: { fieldMode: 'hidden' },
+        },
       }),
     },
   }),
@@ -156,12 +168,31 @@ export const lists = {
       // The GrapesJS field for rich content
       content: grapesJsField(),
       slug: text({
-        validation: { isRequired: true },
         isIndexed: 'unique',
+        ui: {
+          createView: { fieldMode: 'hidden' },
+          itemView: { fieldMode: 'read' },
+        },
       }),
       createdAt: timestamp({
         defaultValue: { kind: 'now' },
+        ui: {
+          createView: { fieldMode: 'hidden' },
+          itemView: { fieldMode: 'hidden' },
+        },
       }),
+    },
+    hooks: {
+      resolveInput: ({ resolvedData }) => {
+        const { title } = resolvedData;
+        if (title) {
+          return {
+            ...resolvedData,
+            slug: slugify(title),
+          };
+        }
+        return resolvedData;
+      },
     },
   }),
 

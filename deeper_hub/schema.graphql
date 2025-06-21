@@ -314,13 +314,9 @@ input TagRelateToManyForCreateInput {
 type Page {
   id: ID!
   title: String
+  content: JSON
   slug: String
-  content: Page_content_Document
-  author: User
-}
-
-type Page_content_Document {
-  document(hydrateRelationships: Boolean! = false): JSON!
+  createdAt: DateTime
 }
 
 input PageWhereUniqueInput {
@@ -335,20 +331,21 @@ input PageWhereInput {
   id: IDFilter
   title: StringFilter
   slug: StringFilter
-  author: UserWhereInput
+  createdAt: DateTimeNullableFilter
 }
 
 input PageOrderByInput {
   id: OrderDirection
   title: OrderDirection
   slug: OrderDirection
+  createdAt: OrderDirection
 }
 
 input PageUpdateInput {
   title: String
-  slug: String
   content: JSON
-  author: UserRelateToOneForUpdateInput
+  slug: String
+  createdAt: DateTime
 }
 
 input PageUpdateArgs {
@@ -358,9 +355,9 @@ input PageUpdateArgs {
 
 input PageCreateInput {
   title: String
-  slug: String
   content: JSON
-  author: UserRelateToOneForCreateInput
+  slug: String
+  createdAt: DateTime
 }
 
 type Tag {
