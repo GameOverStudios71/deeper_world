@@ -1,0 +1,54 @@
+<.header>
+  Server {@server.id}
+  <:subtitle>This is a server record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/servers/#{@server}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit server</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Verified">{@server.verified}</:item>
+  <:item title="Latitude">{@server.latitude}</:item>
+  <:item title="Longitude">{@server.longitude}</:item>
+  <:item title="Country">{@server.country}</:item>
+  <:item title="Region">{@server.region}</:item>
+  <:item title="City">{@server.city}</:item>
+  <:item title="Server name">{@server.server_name}</:item>
+  <:item title="Url">{@server.url}</:item>
+  <:item title="Description hero">{@server.description_hero}</:item>
+  <:item title="Description full">{@server.description_full}</:item>
+  <:item title="Ping ms">{@server.ping_ms}</:item>
+  <:item title="Visited users lst mounth">{@server.visited_users_lst_mounth}</:item>
+  <:item title="Reputation">{@server.reputation}</:item>
+  <:item title="Ai permission">{@server.ai_permission}</:item>
+  <:item title="Ai generated">{@server.ai_generated}</:item>
+  <:item title="Server rules">{@server.server_rules}</:item>
+  <:item title="Server cpu info">{@server.server_cpu_info}</:item>
+  <:item title="Server max users">{@server.server_max_users}</:item>
+  <:item title="Min age">{@server.min_age}</:item>
+  <:item title="Picture box">{@server.picture_box}</:item>
+  <:item title="Picture icon">{@server.picture_icon}</:item>
+  <:item title="Picture featured">{@server.picture_featured}</:item>
+  <:item title="Picture mini">{@server.picture_mini}</:item>
+  <:item title="Screenshoots">{@server.screenshoots}</:item>
+  <:item title="Feature colors">{@server.feature_colors}</:item>
+  <:item title="Platform version">{@server.platform_version}</:item>
+  <:item title="Allow anonymous">{@server.allow_anonymous}</:item>
+  <:item title="Max connections">{@server.max_connections}</:item>
+  <:item title="Encryption level">{@server.encryption_level}</:item>
+</.list>
+
+<.back navigate={~p"/servers"}>Back to servers</.back>
+
+<.modal :if={@live_action == :edit} id="server-modal" show on_cancel={JS.patch(~p"/servers/#{@server}")}>
+  <.live_component
+    module={DeeperHubWeb.ServerLive.FormComponent}
+    id={@server.id}
+    title={@page_title}
+    action={@live_action}
+    server={@server}
+    patch={~p"/servers/#{@server}"}
+  />
+</.modal>

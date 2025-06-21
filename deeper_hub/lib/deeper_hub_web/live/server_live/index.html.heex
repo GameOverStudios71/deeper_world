@@ -1,0 +1,69 @@
+<.header>
+  Listing Servers
+  <:actions>
+    <.link patch={~p"/servers/new"}>
+      <.button>New Server</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="servers"
+  rows={@streams.servers}
+  row_click={fn {_id, server} -> JS.navigate(~p"/servers/#{server}") end}
+>
+  <:col :let={{_id, server}} label="Verified">{server.verified}</:col>
+  <:col :let={{_id, server}} label="Latitude">{server.latitude}</:col>
+  <:col :let={{_id, server}} label="Longitude">{server.longitude}</:col>
+  <:col :let={{_id, server}} label="Country">{server.country}</:col>
+  <:col :let={{_id, server}} label="Region">{server.region}</:col>
+  <:col :let={{_id, server}} label="City">{server.city}</:col>
+  <:col :let={{_id, server}} label="Server name">{server.server_name}</:col>
+  <:col :let={{_id, server}} label="Url">{server.url}</:col>
+  <:col :let={{_id, server}} label="Description hero">{server.description_hero}</:col>
+  <:col :let={{_id, server}} label="Description full">{server.description_full}</:col>
+  <:col :let={{_id, server}} label="Ping ms">{server.ping_ms}</:col>
+  <:col :let={{_id, server}} label="Visited users lst mounth">{server.visited_users_lst_mounth}</:col>
+  <:col :let={{_id, server}} label="Reputation">{server.reputation}</:col>
+  <:col :let={{_id, server}} label="Ai permission">{server.ai_permission}</:col>
+  <:col :let={{_id, server}} label="Ai generated">{server.ai_generated}</:col>
+  <:col :let={{_id, server}} label="Server rules">{server.server_rules}</:col>
+  <:col :let={{_id, server}} label="Server cpu info">{server.server_cpu_info}</:col>
+  <:col :let={{_id, server}} label="Server max users">{server.server_max_users}</:col>
+  <:col :let={{_id, server}} label="Min age">{server.min_age}</:col>
+  <:col :let={{_id, server}} label="Picture box">{server.picture_box}</:col>
+  <:col :let={{_id, server}} label="Picture icon">{server.picture_icon}</:col>
+  <:col :let={{_id, server}} label="Picture featured">{server.picture_featured}</:col>
+  <:col :let={{_id, server}} label="Picture mini">{server.picture_mini}</:col>
+  <:col :let={{_id, server}} label="Screenshoots">{server.screenshoots}</:col>
+  <:col :let={{_id, server}} label="Feature colors">{server.feature_colors}</:col>
+  <:col :let={{_id, server}} label="Platform version">{server.platform_version}</:col>
+  <:col :let={{_id, server}} label="Allow anonymous">{server.allow_anonymous}</:col>
+  <:col :let={{_id, server}} label="Max connections">{server.max_connections}</:col>
+  <:col :let={{_id, server}} label="Encryption level">{server.encryption_level}</:col>
+  <:action :let={{_id, server}}>
+    <div class="sr-only">
+      <.link navigate={~p"/servers/#{server}"}>Show</.link>
+    </div>
+    <.link patch={~p"/servers/#{server}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, server}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: server.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="server-modal" show on_cancel={JS.patch(~p"/servers")}>
+  <.live_component
+    module={DeeperHubWeb.ServerLive.FormComponent}
+    id={@server.id || :new}
+    title={@page_title}
+    action={@live_action}
+    server={@server}
+    patch={~p"/servers"}
+  />
+</.modal>

@@ -213,17 +213,6 @@ defmodule DeeperHubWeb.UserAuth do
     end
   end
 
-  def require_admin_user(conn, _opts) do
-    if conn.assigns.current_user && conn.assigns.current_user.is_admin do
-      conn
-    else
-      conn
-      |> put_flash(:error, "Acesso restrito a administradores")
-      |> redirect(to: ~p"/")
-      |> halt()
-    end
-  end
-
   defp put_token_in_session(conn, token) do
     conn
     |> put_session(:user_token, token)

@@ -20,7 +20,7 @@ config :deeper_hub, DeeperHubWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "fXv+n9MW/iDagyPX600twD2wEMrkt2MeokE4jnixyeUv+X+OfW01PsuTU49+lXod",
+  secret_key_base: "zTuB1k/bk6BRXg28VC7c/dH4RArfK51L6hLs59sAturL3NkdJiEfBNT4TrE0sExE",
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:deeper_hub, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:deeper_hub, ~w(--watch)]}

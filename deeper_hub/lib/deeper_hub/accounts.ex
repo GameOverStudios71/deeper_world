@@ -8,6 +8,13 @@ defmodule DeeperHub.Accounts do
 
   alias DeeperHub.Accounts.{User, UserToken, UserNotifier}
 
+  @doc """
+  Lists all users.
+  """
+  def list_users do
+    Repo.all(User)
+  end
+
   ## Database getters
 
   @doc """
@@ -77,15 +84,7 @@ defmodule DeeperHub.Accounts do
   def register_user(attrs) do
     %User{}
     |> User.registration_changeset(attrs)
-    |> maybe_make_first_user_admin()
     |> Repo.insert()
-  end
-
-  defp maybe_make_first_user_admin(changeset) do
-    case Repo.aggregate(User, :count, :id) == 0 do
-      true -> Ecto.Changeset.change(changeset, %{is_admin: true})
-      false -> changeset
-    end
   end
 
   @doc """

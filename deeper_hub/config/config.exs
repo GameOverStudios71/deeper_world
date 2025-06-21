@@ -20,7 +20,7 @@ config :deeper_hub, DeeperHubWeb.Endpoint,
     layout: false
   ],
   pubsub_server: DeeperHub.PubSub,
-  live_view: [signing_salt: "OAuEqBUO"]
+  live_view: [signing_salt: "f1Xsg10/"]
 
 # Configures the mailer
 #

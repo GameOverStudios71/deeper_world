@@ -4,7 +4,6 @@ defmodule DeeperHub.Accounts.User do
 
   schema "users" do
     field :email, :string
-    field :is_admin, :boolean, default: false
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :current_password, :string, virtual: true, redact: true

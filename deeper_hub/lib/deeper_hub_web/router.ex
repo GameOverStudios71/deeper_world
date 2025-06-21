@@ -56,9 +56,11 @@ defmodule DeeperHubWeb.Router do
       live "/users/log_in", UserLoginLive, :new
       live "/users/reset_password", UserForgotPasswordLive, :new
       live "/users/reset_password/:token", UserResetPasswordLive, :edit
+
     end
 
     post "/users/log_in", UserSessionController, :create
+
   end
 
   scope "/", DeeperHubWeb do
@@ -68,6 +70,50 @@ defmodule DeeperHubWeb.Router do
       on_mount: [{DeeperHubWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+
+      # CRUD Routes
+      live "/servers", ServerLive.Index, :index
+      live "/servers/new", ServerLive.Index, :new
+      live "/servers/:id/edit", ServerLive.Index, :edit
+      live "/servers/:id", ServerLive.Show, :show
+      live "/servers/:id/show/edit", ServerLive.Show, :edit
+
+      live "/categories", CategoryLive.Index, :index
+      live "/categories/new", CategoryLive.Index, :new
+      live "/categories/:id/edit", CategoryLive.Index, :edit
+      live "/categories/:id", CategoryLive.Show, :show
+      live "/categories/:id/show/edit", CategoryLive.Show, :edit
+
+      live "/languages", LanguageLive.Index, :index
+      live "/languages/new", LanguageLive.Index, :new
+      live "/languages/:id/edit", LanguageLive.Index, :edit
+      live "/languages/:id", LanguageLive.Show, :show
+      live "/languages/:id/show/edit", LanguageLive.Show, :edit
+
+      live "/statuses", StatusLive.Index, :index
+      live "/statuses/new", StatusLive.Index, :new
+      live "/statuses/:id/edit", StatusLive.Index, :edit
+      live "/statuses/:id", StatusLive.Show, :show
+      live "/statuses/:id/show/edit", StatusLive.Show, :edit
+
+      live "/engines", EngineLive.Index, :index
+      live "/engines/new", EngineLive.Index, :new
+      live "/engines/:id/edit", EngineLive.Index, :edit
+      live "/engines/:id", EngineLive.Show, :show
+      live "/engines/:id/show/edit", EngineLive.Show, :edit
+
+      live "/networks", NetworkLive.Index, :index
+      live "/networks/new", NetworkLive.Index, :new
+      live "/networks/:id/edit", NetworkLive.Index, :edit
+      live "/networks/:id", NetworkLive.Show, :show
+      live "/networks/:id/show/edit", NetworkLive.Show, :edit
+
+      live "/content_types", ContentTypeLive.Index, :index
+      live "/content_types/new", ContentTypeLive.Index, :new
+      live "/content_types/:id/edit", ContentTypeLive.Index, :edit
+      live "/content_types/:id", ContentTypeLive.Show, :show
+      live "/content_types/:id/show/edit", ContentTypeLive.Show, :edit
+
     end
   end
 
@@ -81,13 +127,5 @@ defmodule DeeperHubWeb.Router do
       live "/users/confirm/:token", UserConfirmationLive, :edit
       live "/users/confirm", UserConfirmationInstructionsLive, :new
     end
-  end
-
-  # Rotas administrativas
-  scope "/admin", DeeperHubWeb.Admin, as: :admin do
-    pipe_through [:browser, :require_authenticated_user, :require_admin_user]
-
-    get "/dashboard", DashboardController, :index
-    resources "/servers", ServerController
   end
 end

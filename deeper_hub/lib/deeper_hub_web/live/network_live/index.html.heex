@@ -1,0 +1,41 @@
+<.header>
+  Listing Networks
+  <:actions>
+    <.link patch={~p"/networks/new"}>
+      <.button>New Network</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="networks"
+  rows={@streams.networks}
+  row_click={fn {_id, network} -> JS.navigate(~p"/networks/#{network}") end}
+>
+  <:col :let={{_id, network}} label="Name">{network.name}</:col>
+  <:action :let={{_id, network}}>
+    <div class="sr-only">
+      <.link navigate={~p"/networks/#{network}"}>Show</.link>
+    </div>
+    <.link patch={~p"/networks/#{network}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, network}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: network.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="network-modal" show on_cancel={JS.patch(~p"/networks")}>
+  <.live_component
+    module={DeeperHubWeb.NetworkLive.FormComponent}
+    id={@network.id || :new}
+    title={@page_title}
+    action={@live_action}
+    network={@network}
+    patch={~p"/networks"}
+  />
+</.modal>

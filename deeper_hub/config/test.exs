@@ -17,7 +17,7 @@ config :deeper_hub, DeeperHub.Repo,
 # you can enable the server option below.
 config :deeper_hub, DeeperHubWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "19yIGP4kCpaGw7nKEXjz345PuQrYcZft5ExKt2ik12ZBoW3+QNitxZdf5yd+XH8y",
+  secret_key_base: "UYSCRUS36UyrQR3UoUD7kbUgfILdKddkmQZQ55fxZkeBwT6RSZ1EojIU3xyo7XwE",
   server: false
 
 # In test we don't send emails

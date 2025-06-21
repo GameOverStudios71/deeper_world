@@ -7,7 +7,7 @@ defmodule DeeperHubWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_deeper_hub_key",
-    signing_salt: "7g1Bqeyf",
+    signing_salt: "0viUwO60",
     same_site: "Lax"
   ]
 
