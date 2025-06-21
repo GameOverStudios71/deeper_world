@@ -1,0 +1,41 @@
+<.header>
+  Listing Server tags
+  <:actions>
+    <.link patch={~p"/server_tags/new"}>
+      <.button>New Server tag</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="server_tags"
+  rows={@streams.server_tags}
+  row_click={fn {_id, server_tag} -> JS.navigate(~p"/server_tags/#{server_tag}") end}
+>
+  <:col :let={{_id, server_tag}} label="Tag">{server_tag.tag}</:col>
+  <:action :let={{_id, server_tag}}>
+    <div class="sr-only">
+      <.link navigate={~p"/server_tags/#{server_tag}"}>Show</.link>
+    </div>
+    <.link patch={~p"/server_tags/#{server_tag}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, server_tag}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: server_tag.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="server_tag-modal" show on_cancel={JS.patch(~p"/server_tags")}>
+  <.live_component
+    module={DeeperHubWeb.ServerTagLive.FormComponent}
+    id={@server_tag.id || :new}
+    title={@page_title}
+    action={@live_action}
+    server_tag={@server_tag}
+    patch={~p"/server_tags"}
+  />
+</.modal>

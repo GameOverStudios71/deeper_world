@@ -1,0 +1,28 @@
+<.header>
+  Reward {@reward.id}
+  <:subtitle>This is a reward record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/rewards/#{@reward}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit reward</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Reward name">{@reward.reward_name}</:item>
+  <:item title="Reward description">{@reward.reward_description}</:item>
+  <:item title="Points required">{@reward.points_required}</:item>
+</.list>
+
+<.back navigate={~p"/rewards"}>Back to rewards</.back>
+
+<.modal :if={@live_action == :edit} id="reward-modal" show on_cancel={JS.patch(~p"/rewards/#{@reward}")}>
+  <.live_component
+    module={DeeperHubWeb.RewardLive.FormComponent}
+    id={@reward.id}
+    title={@page_title}
+    action={@live_action}
+    reward={@reward}
+    patch={~p"/rewards/#{@reward}"}
+  />
+</.modal>

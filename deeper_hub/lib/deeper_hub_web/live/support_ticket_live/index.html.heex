@@ -1,0 +1,42 @@
+<.header>
+  Listing Support tickets
+  <:actions>
+    <.link patch={~p"/support_tickets/new"}>
+      <.button>New Support ticket</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="support_tickets"
+  rows={@streams.support_tickets}
+  row_click={fn {_id, support_ticket} -> JS.navigate(~p"/support_tickets/#{support_ticket}") end}
+>
+  <:col :let={{_id, support_ticket}} label="Issue description">{support_ticket.issue_description}</:col>
+  <:col :let={{_id, support_ticket}} label="Status">{support_ticket.status}</:col>
+  <:action :let={{_id, support_ticket}}>
+    <div class="sr-only">
+      <.link navigate={~p"/support_tickets/#{support_ticket}"}>Show</.link>
+    </div>
+    <.link patch={~p"/support_tickets/#{support_ticket}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, support_ticket}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: support_ticket.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="support_ticket-modal" show on_cancel={JS.patch(~p"/support_tickets")}>
+  <.live_component
+    module={DeeperHubWeb.SupportTicketLive.FormComponent}
+    id={@support_ticket.id || :new}
+    title={@page_title}
+    action={@live_action}
+    support_ticket={@support_ticket}
+    patch={~p"/support_tickets"}
+  />
+</.modal>

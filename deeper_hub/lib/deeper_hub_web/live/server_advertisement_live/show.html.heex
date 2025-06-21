@@ -1,0 +1,29 @@
+<.header>
+  Server advertisement {@server_advertisement.id}
+  <:subtitle>This is a server_advertisement record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/advertisements/#{@server_advertisement}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit server_advertisement</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Ad title">{@server_advertisement.ad_title}</:item>
+  <:item title="Ad description">{@server_advertisement.ad_description}</:item>
+  <:item title="Start date">{@server_advertisement.start_date}</:item>
+  <:item title="End date">{@server_advertisement.end_date}</:item>
+</.list>
+
+<.back navigate={~p"/advertisements"}>Back to advertisements</.back>
+
+<.modal :if={@live_action == :edit} id="server_advertisement-modal" show on_cancel={JS.patch(~p"/advertisements/#{@server_advertisement}")}>
+  <.live_component
+    module={DeeperHubWeb.ServerAdvertisementLive.FormComponent}
+    id={@server_advertisement.id}
+    title={@page_title}
+    action={@live_action}
+    server_advertisement={@server_advertisement}
+    patch={~p"/advertisements/#{@server_advertisement}"}
+  />
+</.modal>

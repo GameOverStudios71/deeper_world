@@ -1,0 +1,45 @@
+<.header>
+  Listing Events
+  <:actions>
+    <.link patch={~p"/events/new"}>
+      <.button>New Server event</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="events"
+  rows={@streams.events}
+  row_click={fn {_id, server_event} -> JS.navigate(~p"/events/#{server_event}") end}
+>
+  <:col :let={{_id, server_event}} label="Title">{server_event.title}</:col>
+  <:col :let={{_id, server_event}} label="Description">{server_event.description}</:col>
+  <:col :let={{_id, server_event}} label="Start time">{server_event.start_time}</:col>
+  <:col :let={{_id, server_event}} label="End time">{server_event.end_time}</:col>
+  <:col :let={{_id, server_event}} label="Is active">{server_event.is_active}</:col>
+  <:action :let={{_id, server_event}}>
+    <div class="sr-only">
+      <.link navigate={~p"/events/#{server_event}"}>Show</.link>
+    </div>
+    <.link patch={~p"/events/#{server_event}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, server_event}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: server_event.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="server_event-modal" show on_cancel={JS.patch(~p"/events")}>
+  <.live_component
+    module={DeeperHubWeb.ServerEventLive.FormComponent}
+    id={@server_event.id || :new}
+    title={@page_title}
+    action={@live_action}
+    server_event={@server_event}
+    patch={~p"/events"}
+  />
+</.modal>

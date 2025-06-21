@@ -1,0 +1,27 @@
+<.header>
+  Server invite {@server_invite.id}
+  <:subtitle>This is a server_invite record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/server_invites/#{@server_invite}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit server_invite</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Invite code">{@server_invite.invite_code}</:item>
+  <:item title="Expires at">{@server_invite.expires_at}</:item>
+</.list>
+
+<.back navigate={~p"/server_invites"}>Back to server_invites</.back>
+
+<.modal :if={@live_action == :edit} id="server_invite-modal" show on_cancel={JS.patch(~p"/server_invites/#{@server_invite}")}>
+  <.live_component
+    module={DeeperHubWeb.ServerInviteLive.FormComponent}
+    id={@server_invite.id}
+    title={@page_title}
+    action={@live_action}
+    server_invite={@server_invite}
+    patch={~p"/server_invites/#{@server_invite}"}
+  />
+</.modal>

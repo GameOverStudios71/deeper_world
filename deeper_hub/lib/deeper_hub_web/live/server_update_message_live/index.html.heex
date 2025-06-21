@@ -1,0 +1,44 @@
+<.header>
+  Listing Server update messages
+  <:actions>
+    <.link patch={~p"/server_update_messages/new"}>
+      <.button>New Server update message</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="server_update_messages"
+  rows={@streams.server_update_messages}
+  row_click={fn {_id, server_update_message} -> JS.navigate(~p"/server_update_messages/#{server_update_message}") end}
+>
+  <:col :let={{_id, server_update_message}} label="Update notes">{server_update_message.update_notes}</:col>
+  <:col :let={{_id, server_update_message}} label="New version">{server_update_message.new_version}</:col>
+  <:col :let={{_id, server_update_message}} label="Screenshoots">{server_update_message.screenshoots}</:col>
+  <:col :let={{_id, server_update_message}} label="Update date">{server_update_message.update_date}</:col>
+  <:action :let={{_id, server_update_message}}>
+    <div class="sr-only">
+      <.link navigate={~p"/server_update_messages/#{server_update_message}"}>Show</.link>
+    </div>
+    <.link patch={~p"/server_update_messages/#{server_update_message}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, server_update_message}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: server_update_message.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="server_update_message-modal" show on_cancel={JS.patch(~p"/server_update_messages")}>
+  <.live_component
+    module={DeeperHubWeb.ServerUpdateMessageLive.FormComponent}
+    id={@server_update_message.id || :new}
+    title={@page_title}
+    action={@live_action}
+    server_update_message={@server_update_message}
+    patch={~p"/server_update_messages"}
+  />
+</.modal>

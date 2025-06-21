@@ -1,0 +1,42 @@
+<.header>
+  Listing Server invites
+  <:actions>
+    <.link patch={~p"/server_invites/new"}>
+      <.button>New Server invite</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="server_invites"
+  rows={@streams.server_invites}
+  row_click={fn {_id, server_invite} -> JS.navigate(~p"/server_invites/#{server_invite}") end}
+>
+  <:col :let={{_id, server_invite}} label="Invite code">{server_invite.invite_code}</:col>
+  <:col :let={{_id, server_invite}} label="Expires at">{server_invite.expires_at}</:col>
+  <:action :let={{_id, server_invite}}>
+    <div class="sr-only">
+      <.link navigate={~p"/server_invites/#{server_invite}"}>Show</.link>
+    </div>
+    <.link patch={~p"/server_invites/#{server_invite}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, server_invite}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: server_invite.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="server_invite-modal" show on_cancel={JS.patch(~p"/server_invites")}>
+  <.live_component
+    module={DeeperHubWeb.ServerInviteLive.FormComponent}
+    id={@server_invite.id || :new}
+    title={@page_title}
+    action={@live_action}
+    server_invite={@server_invite}
+    patch={~p"/server_invites"}
+  />
+</.modal>

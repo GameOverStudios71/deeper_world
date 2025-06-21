@@ -1,0 +1,42 @@
+<.header>
+  Listing Server reputation
+  <:actions>
+    <.link patch={~p"/server_reputation/new"}>
+      <.button>New Server reputation</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="server_reputation"
+  rows={@streams.server_reputation_collection}
+  row_click={fn {_id, server_reputation} -> JS.navigate(~p"/server_reputation/#{server_reputation}") end}
+>
+  <:col :let={{_id, server_reputation}} label="Reputation score">{server_reputation.reputation_score}</:col>
+  <:col :let={{_id, server_reputation}} label="Last updated">{server_reputation.last_updated}</:col>
+  <:action :let={{_id, server_reputation}}>
+    <div class="sr-only">
+      <.link navigate={~p"/server_reputation/#{server_reputation}"}>Show</.link>
+    </div>
+    <.link patch={~p"/server_reputation/#{server_reputation}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, server_reputation}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: server_reputation.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="server_reputation-modal" show on_cancel={JS.patch(~p"/server_reputation")}>
+  <.live_component
+    module={DeeperHubWeb.ServerReputationLive.FormComponent}
+    id={@server_reputation.id || :new}
+    title={@page_title}
+    action={@live_action}
+    server_reputation={@server_reputation}
+    patch={~p"/server_reputation"}
+  />
+</.modal>

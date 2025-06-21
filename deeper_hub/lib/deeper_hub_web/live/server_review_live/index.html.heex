@@ -1,0 +1,42 @@
+<.header>
+  Listing Reviews
+  <:actions>
+    <.link patch={~p"/reviews/new"}>
+      <.button>New Server review</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="reviews"
+  rows={@streams.reviews}
+  row_click={fn {_id, server_review} -> JS.navigate(~p"/reviews/#{server_review}") end}
+>
+  <:col :let={{_id, server_review}} label="Rating">{server_review.rating}</:col>
+  <:col :let={{_id, server_review}} label="Comments">{server_review.comments}</:col>
+  <:action :let={{_id, server_review}}>
+    <div class="sr-only">
+      <.link navigate={~p"/reviews/#{server_review}"}>Show</.link>
+    </div>
+    <.link patch={~p"/reviews/#{server_review}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, server_review}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: server_review.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="server_review-modal" show on_cancel={JS.patch(~p"/reviews")}>
+  <.live_component
+    module={DeeperHubWeb.ServerReviewLive.FormComponent}
+    id={@server_review.id || :new}
+    title={@page_title}
+    action={@live_action}
+    server_review={@server_review}
+    patch={~p"/reviews"}
+  />
+</.modal>

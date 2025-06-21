@@ -1,0 +1,42 @@
+<.header>
+  Listing Achievement types
+  <:actions>
+    <.link patch={~p"/achievement_types/new"}>
+      <.button>New Achievement type</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="achievement_types"
+  rows={@streams.achievement_types}
+  row_click={fn {_id, achievement_type} -> JS.navigate(~p"/achievement_types/#{achievement_type}") end}
+>
+  <:col :let={{_id, achievement_type}} label="Name">{achievement_type.name}</:col>
+  <:col :let={{_id, achievement_type}} label="Description">{achievement_type.description}</:col>
+  <:action :let={{_id, achievement_type}}>
+    <div class="sr-only">
+      <.link navigate={~p"/achievement_types/#{achievement_type}"}>Show</.link>
+    </div>
+    <.link patch={~p"/achievement_types/#{achievement_type}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, achievement_type}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: achievement_type.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="achievement_type-modal" show on_cancel={JS.patch(~p"/achievement_types")}>
+  <.live_component
+    module={DeeperHubWeb.AchievementTypeLive.FormComponent}
+    id={@achievement_type.id || :new}
+    title={@page_title}
+    action={@live_action}
+    achievement_type={@achievement_type}
+    patch={~p"/achievement_types"}
+  />
+</.modal>

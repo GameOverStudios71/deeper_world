@@ -1,0 +1,44 @@
+<.header>
+  Listing Advertisements
+  <:actions>
+    <.link patch={~p"/advertisements/new"}>
+      <.button>New Server advertisement</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="advertisements"
+  rows={@streams.advertisements}
+  row_click={fn {_id, server_advertisement} -> JS.navigate(~p"/advertisements/#{server_advertisement}") end}
+>
+  <:col :let={{_id, server_advertisement}} label="Ad title">{server_advertisement.ad_title}</:col>
+  <:col :let={{_id, server_advertisement}} label="Ad description">{server_advertisement.ad_description}</:col>
+  <:col :let={{_id, server_advertisement}} label="Start date">{server_advertisement.start_date}</:col>
+  <:col :let={{_id, server_advertisement}} label="End date">{server_advertisement.end_date}</:col>
+  <:action :let={{_id, server_advertisement}}>
+    <div class="sr-only">
+      <.link navigate={~p"/advertisements/#{server_advertisement}"}>Show</.link>
+    </div>
+    <.link patch={~p"/advertisements/#{server_advertisement}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, server_advertisement}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: server_advertisement.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="server_advertisement-modal" show on_cancel={JS.patch(~p"/advertisements")}>
+  <.live_component
+    module={DeeperHubWeb.ServerAdvertisementLive.FormComponent}
+    id={@server_advertisement.id || :new}
+    title={@page_title}
+    action={@live_action}
+    server_advertisement={@server_advertisement}
+    patch={~p"/advertisements"}
+  />
+</.modal>

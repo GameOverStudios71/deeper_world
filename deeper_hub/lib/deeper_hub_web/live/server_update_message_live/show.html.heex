@@ -1,0 +1,29 @@
+<.header>
+  Server update message {@server_update_message.id}
+  <:subtitle>This is a server_update_message record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/server_update_messages/#{@server_update_message}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit server_update_message</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Update notes">{@server_update_message.update_notes}</:item>
+  <:item title="New version">{@server_update_message.new_version}</:item>
+  <:item title="Screenshoots">{@server_update_message.screenshoots}</:item>
+  <:item title="Update date">{@server_update_message.update_date}</:item>
+</.list>
+
+<.back navigate={~p"/server_update_messages"}>Back to server_update_messages</.back>
+
+<.modal :if={@live_action == :edit} id="server_update_message-modal" show on_cancel={JS.patch(~p"/server_update_messages/#{@server_update_message}")}>
+  <.live_component
+    module={DeeperHubWeb.ServerUpdateMessageLive.FormComponent}
+    id={@server_update_message.id}
+    title={@page_title}
+    action={@live_action}
+    server_update_message={@server_update_message}
+    patch={~p"/server_update_messages/#{@server_update_message}"}
+  />
+</.modal>

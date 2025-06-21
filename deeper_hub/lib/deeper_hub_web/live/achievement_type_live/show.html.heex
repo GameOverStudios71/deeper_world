@@ -1,0 +1,27 @@
+<.header>
+  Achievement type {@achievement_type.id}
+  <:subtitle>This is a achievement_type record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/achievement_types/#{@achievement_type}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit achievement_type</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name">{@achievement_type.name}</:item>
+  <:item title="Description">{@achievement_type.description}</:item>
+</.list>
+
+<.back navigate={~p"/achievement_types"}>Back to achievement_types</.back>
+
+<.modal :if={@live_action == :edit} id="achievement_type-modal" show on_cancel={JS.patch(~p"/achievement_types/#{@achievement_type}")}>
+  <.live_component
+    module={DeeperHubWeb.AchievementTypeLive.FormComponent}
+    id={@achievement_type.id}
+    title={@page_title}
+    action={@live_action}
+    achievement_type={@achievement_type}
+    patch={~p"/achievement_types/#{@achievement_type}"}
+  />
+</.modal>

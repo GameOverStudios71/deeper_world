@@ -1,0 +1,42 @@
+<.header>
+  Listing User feedback
+  <:actions>
+    <.link patch={~p"/user_feedback/new"}>
+      <.button>New User feedback</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="user_feedback"
+  rows={@streams.user_feedback_collection}
+  row_click={fn {_id, user_feedback} -> JS.navigate(~p"/user_feedback/#{user_feedback}") end}
+>
+  <:col :let={{_id, user_feedback}} label="Feedback text">{user_feedback.feedback_text}</:col>
+  <:col :let={{_id, user_feedback}} label="Submitted at">{user_feedback.submitted_at}</:col>
+  <:action :let={{_id, user_feedback}}>
+    <div class="sr-only">
+      <.link navigate={~p"/user_feedback/#{user_feedback}"}>Show</.link>
+    </div>
+    <.link patch={~p"/user_feedback/#{user_feedback}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, user_feedback}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: user_feedback.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="user_feedback-modal" show on_cancel={JS.patch(~p"/user_feedback")}>
+  <.live_component
+    module={DeeperHubWeb.UserFeedbackLive.FormComponent}
+    id={@user_feedback.id || :new}
+    title={@page_title}
+    action={@live_action}
+    user_feedback={@user_feedback}
+    patch={~p"/user_feedback"}
+  />
+</.modal>

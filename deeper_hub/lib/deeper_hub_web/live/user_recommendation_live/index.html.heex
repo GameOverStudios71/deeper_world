@@ -1,0 +1,41 @@
+<.header>
+  Listing User recommendations
+  <:actions>
+    <.link patch={~p"/user_recommendations/new"}>
+      <.button>New User recommendation</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="user_recommendations"
+  rows={@streams.user_recommendations}
+  row_click={fn {_id, user_recommendation} -> JS.navigate(~p"/user_recommendations/#{user_recommendation}") end}
+>
+  <:col :let={{_id, user_recommendation}} label="Recommendation score">{user_recommendation.recommendation_score}</:col>
+  <:action :let={{_id, user_recommendation}}>
+    <div class="sr-only">
+      <.link navigate={~p"/user_recommendations/#{user_recommendation}"}>Show</.link>
+    </div>
+    <.link patch={~p"/user_recommendations/#{user_recommendation}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, user_recommendation}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: user_recommendation.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="user_recommendation-modal" show on_cancel={JS.patch(~p"/user_recommendations")}>
+  <.live_component
+    module={DeeperHubWeb.UserRecommendationLive.FormComponent}
+    id={@user_recommendation.id || :new}
+    title={@page_title}
+    action={@live_action}
+    user_recommendation={@user_recommendation}
+    patch={~p"/user_recommendations"}
+  />
+</.modal>

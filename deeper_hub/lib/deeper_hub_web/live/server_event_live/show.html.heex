@@ -1,0 +1,30 @@
+<.header>
+  Server event {@server_event.id}
+  <:subtitle>This is a server_event record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/events/#{@server_event}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit server_event</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Title">{@server_event.title}</:item>
+  <:item title="Description">{@server_event.description}</:item>
+  <:item title="Start time">{@server_event.start_time}</:item>
+  <:item title="End time">{@server_event.end_time}</:item>
+  <:item title="Is active">{@server_event.is_active}</:item>
+</.list>
+
+<.back navigate={~p"/events"}>Back to events</.back>
+
+<.modal :if={@live_action == :edit} id="server_event-modal" show on_cancel={JS.patch(~p"/events/#{@server_event}")}>
+  <.live_component
+    module={DeeperHubWeb.ServerEventLive.FormComponent}
+    id={@server_event.id}
+    title={@page_title}
+    action={@live_action}
+    server_event={@server_event}
+    patch={~p"/events/#{@server_event}"}
+  />
+</.modal>

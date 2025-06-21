@@ -1,0 +1,42 @@
+<.header>
+  Listing Feedback types
+  <:actions>
+    <.link patch={~p"/feedback_types/new"}>
+      <.button>New Feedback type</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="feedback_types"
+  rows={@streams.feedback_types}
+  row_click={fn {_id, feedback_type} -> JS.navigate(~p"/feedback_types/#{feedback_type}") end}
+>
+  <:col :let={{_id, feedback_type}} label="Name">{feedback_type.name}</:col>
+  <:col :let={{_id, feedback_type}} label="Description">{feedback_type.description}</:col>
+  <:action :let={{_id, feedback_type}}>
+    <div class="sr-only">
+      <.link navigate={~p"/feedback_types/#{feedback_type}"}>Show</.link>
+    </div>
+    <.link patch={~p"/feedback_types/#{feedback_type}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, feedback_type}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: feedback_type.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="feedback_type-modal" show on_cancel={JS.patch(~p"/feedback_types")}>
+  <.live_component
+    module={DeeperHubWeb.FeedbackTypeLive.FormComponent}
+    id={@feedback_type.id || :new}
+    title={@page_title}
+    action={@live_action}
+    feedback_type={@feedback_type}
+    patch={~p"/feedback_types"}
+  />
+</.modal>

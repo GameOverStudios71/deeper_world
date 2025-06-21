@@ -1,79 +1,15 @@
--- Demais Tabelas (com created_at, updated_at e correções)
-CREATE TABLE users (  -- adicionei esta tabela, assumindo que ela não existia
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    -- outros campos relevantes para o usuário
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
-
--- Tabelas de Listas (com UNIQUE para evitar duplicatas)
--- Tabelas de Listas (com UNIQUE para evitar duplicatas)
-CREATE TABLE list_content_types (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    content_type TEXT UNIQUE,
-    description TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
-
-
-CREATE TABLE list_status (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT UNIQUE,         -- UNIQUE garante status únicos
-    description TEXT
-);
-
-CREATE TABLE list_categories (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT UNIQUE,         -- UNIQUE garante categorias únicas
-    description TEXT
-);
-
-CREATE TABLE list_languages (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT UNIQUE,         -- UNIQUE garante idiomas únicos
-    description TEXT
-);
-
-CREATE TABLE list_achievement_types (
+CREATE TABLE achievement_types (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT UNIQUE,          -- UNIQUE garante tipos de conquista únicos
     description TEXT
 );
 
-CREATE TABLE list_feedback_types (
+CREATE TABLE feedback_types (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT UNIQUE,          -- UNIQUE garante tipos de conquista únicos
     description TEXT
 );
 
-
-
-CREATE TABLE list_engines (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    engine TEXT UNIQUE,       -- UNIQUE garante engines únicos
-    description TEXT
-);
-
-CREATE TABLE list_platforms (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    platform TEXT UNIQUE,     -- UNIQUE garante plataformas únicas
-    description TEXT
-);
-
-CREATE TABLE list_reputations (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    reputation TEXT UNIQUE,    -- UNIQUE garante reputações únicas
-    description TEXT
-);
-
-CREATE TABLE list_networks (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT UNIQUE,         -- UNIQUE garante nomes de rede únicos
-    description TEXT
-);
 
 -- Tabelas de Relacionamento (com chaves primárias compostas e ON DELETE CASCADE)
 CREATE TABLE user_follows_servers (
@@ -126,9 +62,8 @@ CREATE TABLE user_feedback (
     feedback_text TEXT,
     submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
-    FOREIGN KEY (feedback_id) REFERENCES list_feedback_types(id)
+    FOREIGN KEY (feedback_id) REFERENCES feedback_types(id)
 );
-
 
 
 -- Tabela: server_reputation
@@ -152,17 +87,6 @@ CREATE TABLE reports (
     FOREIGN KEY (reporter_id) REFERENCES users(id),
     FOREIGN KEY (reported_user_id) REFERENCES users(id),
     FOREIGN KEY (reported_server_id) REFERENCES servers(id)
-);
-
--- Tabela: chat_messages
-CREATE TABLE chat_messages (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    sender_id INTEGER,
-    receiver_id INTEGER,
-    message_text TEXT,
-    sent_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (sender_id) REFERENCES users(id),
-    FOREIGN KEY (receiver_id) REFERENCES users(id)
 );
 
 -- Tabela: challenges
@@ -246,60 +170,6 @@ CREATE TABLE user_favorites (
     FOREIGN KEY (server_id) REFERENCES servers(id)
 );
 
--- Tabela: servers
-CREATE TABLE servers (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    ip_address TEXT,
-    url TEXT,
-    description TEXT,
-    verified BOOLEAN, -- Corrigido o tipo para BOOLEAN
-    category_id INTEGER,
-    language_id INTEGER,
-    latitude REAL,
-    longitude REAL,
-    country TEXT,
-    region TEXT,
-    city TEXT,
-    owner_id INTEGER,
-    status_id INTEGER,
-    ping_ms INTEGER,
-    registered_users INTEGER,
-    visited_users INTEGER,
-    reputation_id INTEGER,
-    password TEXT,
-    free_users_time INTEGER,
-    hour_coust INTEGER,
-    ai_permission BOOLEAN, -- Corrigido o tipo para BOOLEAN
-    ai_generated BOOLEAN,  -- Corrigido o tipo para BOOLEAN
-    server_rules TEXT,
-    server_cpu_info TEXT,
-    server_max_users INTEGER,
-    min_age INTEGER,
-    content_type_id INTEGER,
-    picture_box TEXT,
-    picture_icon TEXT, -- Corrigido o nome da coluna
-    picture_featured TEXT,
-    picture_mini TEXT,
-    screenshoots TEXT,
-    feature_colors TEXT,
-    network_id INTEGER,
-    engine_id INTEGER,
-    platform_version TEXT, -- Corrigido o nome da coluna
-    allow_anonymous BOOLEAN,
-    max_connections INTEGER,
-    encryption_level TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (content_type_id) REFERENCES list_content_types(id) ON DELETE SET NULL,
-    FOREIGN KEY (category_id) REFERENCES list_categories(id) ON DELETE SET NULL,
-    FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE SET NULL,
-    FOREIGN KEY (status_id) REFERENCES list_status(id) ON DELETE SET NULL,
-    FOREIGN KEY (network_id) REFERENCES list_networks(id) ON DELETE SET NULL,
-    FOREIGN KEY (language_id) REFERENCES list_languages(id) ON DELETE SET NULL,
-    FOREIGN KEY (reputation_id) REFERENCES list_reputations(id) ON DELETE SET NULL,
-    FOREIGN KEY (engine_id) REFERENCES list_engines(id) ON DELETE SET NULL
-);
 
 -- platforms_servers (com correção na chave estrangeira e timestamps)
 CREATE TABLE platforms_servers (
@@ -312,8 +182,6 @@ CREATE TABLE platforms_servers (
     FOREIGN KEY (server_id) REFERENCES servers(id) ON DELETE CASCADE
 );
 
-
-
 -- Tabela: achievements
 CREATE TABLE achievements (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -322,7 +190,7 @@ CREATE TABLE achievements (
     points INTEGER,
     icon TEXT,
     achievement_type_id INTEGER,
-    FOREIGN KEY (achievement_type_id) REFERENCES list_achievement_types(id)
+    FOREIGN KEY (achievement_type_id) REFERENCES achievement_types(id)
 );
 
 -- Tabela: reviews
@@ -362,17 +230,6 @@ CREATE TABLE events ( --> server_events
     end_time DATETIME,
     is_active BOOLEAN,
     FOREIGN KEY (server_id) REFERENCES servers(id)
-);
-
--- Tabela: alerts
-CREATE TABLE alerts ( --> server_alerts
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    server_id INTEGER,
-    user_id INTEGER,
-    message TEXT,
-    sent_at DATETIME,
-    FOREIGN KEY (server_id) REFERENCES servers(id),
-    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 -- Table: server_update_messages

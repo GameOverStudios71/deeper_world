@@ -1,0 +1,27 @@
+<.header>
+  Server reputation {@server_reputation.id}
+  <:subtitle>This is a server_reputation record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/server_reputation/#{@server_reputation}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit server_reputation</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Reputation score">{@server_reputation.reputation_score}</:item>
+  <:item title="Last updated">{@server_reputation.last_updated}</:item>
+</.list>
+
+<.back navigate={~p"/server_reputation"}>Back to server_reputation</.back>
+
+<.modal :if={@live_action == :edit} id="server_reputation-modal" show on_cancel={JS.patch(~p"/server_reputation/#{@server_reputation}")}>
+  <.live_component
+    module={DeeperHubWeb.ServerReputationLive.FormComponent}
+    id={@server_reputation.id}
+    title={@page_title}
+    action={@live_action}
+    server_reputation={@server_reputation}
+    patch={~p"/server_reputation/#{@server_reputation}"}
+  />
+</.modal>

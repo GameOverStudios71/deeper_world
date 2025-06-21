@@ -1,0 +1,26 @@
+<.header>
+  Server tag {@server_tag.id}
+  <:subtitle>This is a server_tag record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/server_tags/#{@server_tag}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit server_tag</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Tag">{@server_tag.tag}</:item>
+</.list>
+
+<.back navigate={~p"/server_tags"}>Back to server_tags</.back>
+
+<.modal :if={@live_action == :edit} id="server_tag-modal" show on_cancel={JS.patch(~p"/server_tags/#{@server_tag}")}>
+  <.live_component
+    module={DeeperHubWeb.ServerTagLive.FormComponent}
+    id={@server_tag.id}
+    title={@page_title}
+    action={@live_action}
+    server_tag={@server_tag}
+    patch={~p"/server_tags/#{@server_tag}"}
+  />
+</.modal>
